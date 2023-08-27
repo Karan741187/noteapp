@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as devtool show log;
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
