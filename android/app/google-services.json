@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "529760671049",
+    "project_id": "my-firflufire",
+    "storage_bucket": "my-firflufire.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529760671049:android:4aff7db6c4c840fed0f698",
+        "android_client_info": {
+          "package_name": "com.Myapp.mynotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529760671049-l1ibfvfugdm2n270aln9sqin281h62i6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNviJ8oiuPMZrpobkzVnN6y7Qc7ivyvBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529760671049-l1ibfvfugdm2n270aln9sqin281h62i6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
