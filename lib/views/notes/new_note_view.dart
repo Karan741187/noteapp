@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
+import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:sqflite/sqflite.dart';
 
 class NewNoteView extends StatefulWidget {
   const NewNoteView({super.key});
@@ -9,6 +12,55 @@ class NewNoteView extends StatefulWidget {
 }
 
 class _NewNoteViewState extends State<NewNoteView> {
+  DatabaseNote? _note;
+  late final NotesService _notesService;
+  late final TextEditingController _textController;
+
+  Future<DatabaseNote> createNewNote() async{
+    final existingNote= _note;
+    if(existingNote != null) return existingNote;
+    final currentUser =AuthService.firebase().currentUser!;
+    final email= currentUser.email!;
+    final owner = await _notesService.getUser(email: email);
+    return await _notesService.createNote(owner: owner);
+  }
+  @override
+  void initState() {
+    _notesService=NotesService();
+    _textController=TextEditingController();
+    super.initState();
+  }
+  void _textControllerListner() async{
+    final note=_note;
+    if(note == null) return;
+    final text =_textController.text;
+    await _notesService.updateNote(note: note, text: text);
+  }
+  void _setupTextControllerListner(){
+    _textController.removeListener(_textControllerListner);
+    _textController.addListener(_textControllerListner);
+  }
+
+  @override
+  void dispose() {
+    _deleteNoteIfTextIsEmpty();
+    _saveNoteIfTextNotEmpty();
+    _textController.dispose();
+    super.dispose();
+  }
+  void _deleteNoteIfTextIsEmpty(){
+    final note=_note;
+    if( note != null && _textController.text.isEmpty){
+      _notesService.deleteNote(id: note.id);
+    }
+  }
+  void _saveNoteIfTextNotEmpty() async{
+    final note= _note;
+    final text = _textController.text;
+    if(note != null && text.isNotEmpty){
+      await _notesService.updateNote(note: note, text: text);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +68,30 @@ class _NewNoteViewState extends State<NewNoteView> {
         backgroundColor: Colors.deepOrange,
         title: const Text('New Note'),
       ),
-      body: const Text('Write your new Note here...'),
+      body: FutureBuilder(
+        future: createNewNote(),
+        builder: (context,snapshot){
+          switch(snapshot.connectionState) {
+            case ConnectionState.done:
+              _note=snapshot.data as DatabaseNote?;
+              _setupTextControllerListner();
+
+              return TextField(
+                controller: _textController,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  hintText: 'Write your note here.....',
+                  hintStyle: TextStyle(
+                    fontWeight: FontWeight.w300
+                  )
+                ),
+              );
+            default:
+              return const CircularProgressIndicator();
+          }
+          },
+      )
     );
   }
 }
